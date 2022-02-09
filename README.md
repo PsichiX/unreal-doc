@@ -10,6 +10,7 @@ Tool for generating documentation from Unreal C++ sources.
     1. [Advanced config setup for baking into MD Book](#advanced-config-setup-for-baking-into-md-book)
 1. [Markdown doc comments](#markdown-doc-comments)
 1. [Markdown book pages](#markdown-book-pages)
+1. [Run documentation baking command](#run-documentation-baking-command)
 1. [Examples](#examples)
 
 ## About
@@ -44,6 +45,9 @@ At this moment there are two baking backends available:
 
     Uses [MD Book](https://github.com/rust-lang/mdBook) for baking HTML5 bundle for online or
     offline web books.
+
+> Although config file can be named whatever you want, it's a good rule to give config file
+`UnrealDoc.toml` name.
 
 ### Simple config setup for baking into JSON portable format
 
@@ -321,6 +325,15 @@ Standard expected structure of the book Markdown files:
             printf("Hello World!");
         }
         ```
+
+## Run documentation baking command
+
+Once you have config file and documentation itself all in place, it's time to
+actually bake documentation and book bundle:
+
+```bash
+unreal-doc -i path/to/UnrealDoc.toml
+```
 
 ## Example
 
