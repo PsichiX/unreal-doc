@@ -29,18 +29,18 @@ each other!
     ```
 
 At the moment CLI builds are yet to be setup so release binaries are not yet available from
-releases page - please for now install it using `cargo-install`.
+releases page - please for now install it using `cargo-install` with [Rust toolset](https://rustup.rs/).
 
 ## Config file
 
 Config TOML file tells this tool evenrythig about how to build documentation for your project.
 At this moment there are two baking backends available:
-- **JSON**
+- **`Json`**
     
     Portable representation of documentation and book that can be used in third party
     applications with custom way of baking documentation.
 
-- **MdBook**
+- **`MdBook`**
 
     Uses [MD Book](https://github.com/rust-lang/mdBook) for baking HTML5 bundle for online or
     offline web books.
@@ -113,17 +113,17 @@ footer = "footer.md"
 assets = "assets/"
 ```
 
-- `header`
+- `backend_mdbook.header`
 
     Path to file that contains Markdown content that will be put on every documentation and
     book page header section.
 
-- `footer`
+- `backend_mdbook.footer`
 
     Path to file that contains Markdown content that will be put on every documentation and
     book page footer section.
 
-- `assets`
+- `backend_mdbook.assets`
 
     Path to directory that contains assets (usually images/animations/videos) referenced in
     documentation and book pages.
