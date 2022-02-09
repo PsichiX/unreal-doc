@@ -33,6 +33,8 @@ pub struct BackendMdBook {
     pub footer: Option<PathBuf>,
     #[serde(default)]
     pub assets: Option<PathBuf>,
+    #[serde(default)]
+    pub site_url: Option<String>,
 }
 
 impl Default for BackendMdBook {
@@ -47,6 +49,7 @@ impl Default for BackendMdBook {
             header: None,
             footer: None,
             assets: None,
+            site_url: None,
         }
     }
 }

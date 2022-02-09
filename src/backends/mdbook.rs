@@ -39,6 +39,7 @@ pub struct BookHtml {
     preferred_dark_theme: String,
     mathjax_support: bool,
     no_section_label: bool,
+    site_url: String,
     fold: BookFold,
 }
 
@@ -532,6 +533,7 @@ fn write_manifest(config: &Config) {
                 preferred_dark_theme: "ayu".to_owned(),
                 mathjax_support: true,
                 no_section_label: true,
+                site_url: mdbook.site_url.unwrap_or_else(|| "/".to_string()),
                 fold: BookFold {
                     enable: false,
                     level: 0,
