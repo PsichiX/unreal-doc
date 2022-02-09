@@ -28,7 +28,7 @@ each other!
     ```bash
     cargo install unreal-doc
     ```
-- [Pre-built binaries](releases/)
+- [Pre-built binaries](https://github.com/PsichiX/unreal-doc/releases)
 
 ## Config file
 
