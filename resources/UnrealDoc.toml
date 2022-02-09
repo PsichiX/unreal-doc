@@ -1,0 +1,16 @@
+input_dirs = ["./source"]
+output_dir = "./docs"
+backend = "MdBook"
+
+[settings]
+document_private = true
+document_protected = true
+show_all = true
+
+[backend_mdbook]
+title = "Documentation"
+build = true
+cleanup = true
+header = "header.md"
+footer = "footer.md"
+assets = "assets/"

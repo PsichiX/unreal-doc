@@ -1,0 +1,22 @@
+[package]
+name = "unreal-doc"
+version = "1.0.0"
+authors = ["Patryk 'PsichiX' Budzynski <psichix@gmail.com>"]
+edition = "2021"
+description = "Tool for generating documentation from Unreal C++ sources."
+license = "MIT OR Apache-2.0"
+homepage = "https://github.com/PsichiX/unreal-doc"
+repository = "https://github.com/PsichiX/unreal-doc"
+documentation = "https://docs.rs/unreal-doc"
+readme = "README.md"
+exclude = ["resources/"]
+
+[dependencies]
+clap = "3.0"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.5"
+pest = "2.1"
+pest_derive = "2.1"
+fs_extra = "1.2"
+regex = "1"
