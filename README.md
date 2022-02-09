@@ -24,13 +24,11 @@ each other!
 
 ## Installation
 
-- Installation using `cargo-install` from Rust toolset:
+- Installation using `cargo-install` from [Rust toolset](https://rustup.rs/):
     ```bash
     cargo install unreal-doc
     ```
-
-At the moment CLI builds are yet to be setup so release binaries are not yet available from
-releases page - please for now install it using `cargo-install` with [Rust toolset](https://rustup.rs/).
+- [Pre-built binaries](releases/)
 
 ## Config file
 
