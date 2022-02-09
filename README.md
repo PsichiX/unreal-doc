@@ -338,7 +338,9 @@ unreal-doc -i path/to/UnrealDoc.toml
 ## Example
 
 If you want to see an example of decoumentation and book source files structure,
-take a look at [/resources](/resources) directory in this repository.
+take a look at [/resources](/resources) directory in this repository or more real
+life example that can be found here:
+https://github.com/PsichiX/Unreal-Systems-Architecture/tree/master/Plugins/Systems/Documentation
 
 Soon there will be baked web documentation example put online for you to see how
 end results are looking and working, so stay tuned.
