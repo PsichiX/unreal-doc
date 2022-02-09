@@ -342,5 +342,5 @@ take a look at [/resources](/resources) directory in this repository or more rea
 life example that can be found here:
 https://github.com/PsichiX/Unreal-Systems-Architecture/tree/master/Plugins/Systems/Documentation
 
-Soon there will be baked web documentation example put online for you to see how
-end results are looking and working, so stay tuned.
+Real life example of baked plugin documentation:
+https://psichix.github.io/Unreal-Systems-Architecture/systems
