@@ -9,8 +9,6 @@ use std::{
     process::Command,
 };
 
-const COPYRIGHT: &'static str = "_Documentation built with [**`Unreal-Doc`**](https://github.com/PsichiX/unreal-doc) tool by [**`PsichiX`**](https://github.com/PsichiX)_";
-
 #[derive(Serialize)]
 struct Book {
     pub book: BookInner,
@@ -182,10 +180,28 @@ pub fn bake_mdbook(document: &Document, config: &Config, root: &Path) {
         })
         .unwrap_or_default();
     for (path, content) in files {
-        let content = preprocess_content(&content, &document);
+        let relative_path = if path.starts_with("src/") {
+            path.rfind('/')
+                .map(|index| &path[4..(index + 1)])
+                .unwrap_or_else(|| "")
+        } else {
+            ""
+        };
+        let content = preprocess_content(
+            &content,
+            &document,
+            config.backend_mdbook.as_ref(),
+            relative_path,
+        );
         let path = config.output_dir.join(path);
         ensure_dir(&path);
-        let content = format!("{}{}{}\n---\n{}", header, content, footer, COPYRIGHT);
+        let content = format!(
+            "{}{}{}\n---\n_Documentation built with [**`Unreal-Doc` v{}**](https://github.com/PsichiX/unreal-doc) tool by [**`PsichiX`**](https://github.com/PsichiX)_",
+            header,
+            content,
+            footer,
+            env!("CARGO_PKG_VERSION"),
+        );
         write(&path, content)
             .unwrap_or_else(|_| panic!("Could not write mdbook page file: {:?}", path));
     }
@@ -224,9 +240,21 @@ pub fn bake_mdbook(document: &Document, config: &Config, root: &Path) {
     }
 }
 
-fn preprocess_content(content: &str, document: &Document) -> String {
+fn preprocess_content(
+    content: &str,
+    document: &Document,
+    config: Option<&BackendMdBook>,
+    relative_path: &str,
+) -> String {
     let content = replace_code_references(content, document);
-    replace_snippets(&content, document)
+    let content = replace_snippets(&content, document);
+    fix_site_references(
+        &content,
+        config
+            .and_then(|config| config.site_url.as_ref().map(|v| v.as_str()))
+            .unwrap_or_else(|| "/"),
+        relative_path,
+    )
 }
 
 fn replace_code_references(content: &str, document: &Document) -> String {
@@ -297,6 +325,18 @@ fn replace_snippets(content: &str, document: &Document) -> String {
             println!("Trying to inject non-existing snippet: {}", name);
             format!("```\n{}Missing snippet: {}\n{}```", prefix, name, prefix)
         }
+    })
+    .into()
+}
+
+fn fix_site_references(content: &str, site_url: &str, relative_path: &str) -> String {
+    // TODO: put that regex in lazy static to not perform costly compilation on each call.
+    let re = Regex::new(r"\[(.*)\]\s*\((\s*/)?(.*\.md(\s*#.*)?)\)").unwrap();
+    re.replace_all(content, |captures: &Captures| {
+        let content = captures.get(1).unwrap().as_str().trim();
+        let relative_path = captures.get(2).map(|_| "").unwrap_or_else(|| relative_path);
+        let reference = captures.get(3).unwrap().as_str().trim();
+        format!("[{}]({}{}{})", content, site_url, relative_path, reference)
     })
     .into()
 }

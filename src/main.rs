@@ -78,7 +78,14 @@ fn main() {
 
     match config.backend {
         Backend::Json => bake_json(&document, &config),
-        Backend::MdBook => bake_mdbook(&document, &config, &dir),
+        Backend::MdBook => {
+            if let Ok(site_url) = std::env::var("UNREAL_DOC_MDBOOK_SITE_URL") {
+                if let Some(config) = config.backend_mdbook.as_mut() {
+                    config.site_url = Some(site_url.to_owned());
+                }
+            }
+            bake_mdbook(&document, &config, &dir)
+        }
     }
 }
 
