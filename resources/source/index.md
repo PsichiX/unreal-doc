@@ -2,4 +2,5 @@
 
 Optional directory content description
 
-[Read more](/book/more/index.md)
+[Read
+more](/book/more/index.md)

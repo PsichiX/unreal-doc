@@ -331,12 +331,11 @@ fn replace_snippets(content: &str, document: &Document) -> String {
 
 fn fix_site_references(content: &str, site_url: &str, relative_path: &str) -> String {
     // TODO: put that regex in lazy static to not perform costly compilation on each call.
-    let re = Regex::new(r"\[(.*)\]\s*\((\s*/)?(.*\.md(\s*#.*)?)\)").unwrap();
+    let re = Regex::new(r"\]\s*\((\s*/)?(.*\.md(\s*#.*)?)\)").unwrap();
     re.replace_all(content, |captures: &Captures| {
-        let content = captures.get(1).unwrap().as_str().trim();
-        let relative_path = captures.get(2).map(|_| "").unwrap_or_else(|| relative_path);
-        let reference = captures.get(3).unwrap().as_str().trim();
-        format!("[{}]({}{}{})", content, site_url, relative_path, reference)
+        let relative_path = captures.get(1).map(|_| "").unwrap_or_else(|| relative_path);
+        let reference = captures.get(2).unwrap().as_str().trim();
+        format!("]({}{}{})", site_url, relative_path, reference)
     })
     .into()
 }
