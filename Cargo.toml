@@ -1,6 +1,6 @@
 [package]
 name = "unreal-doc"
-version = "1.0.3"
+version = "1.0.4"
 authors = ["Patryk 'PsichiX' Budzynski <psichix@gmail.com>"]
 edition = "2021"
 description = "Tool for generating documentation from Unreal C++ sources."

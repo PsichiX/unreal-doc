@@ -12,14 +12,14 @@ use crate::{
     config::*,
     document::Document,
 };
-use clap::{App, Arg};
+use clap::{Arg, Command};
 use std::{
     fs::{create_dir_all, read_to_string},
     path::{Path, PathBuf},
 };
 
 fn main() {
-    let matches = App::new(env!("CARGO_BIN_NAME"))
+    let matches = Command::new(env!("CARGO_BIN_NAME"))
         .author(env!("CARGO_PKG_AUTHORS"))
         .version(env!("CARGO_PKG_VERSION"))
         .about(env!("CARGO_PKG_DESCRIPTION"))

@@ -271,6 +271,14 @@ struct Who
 		//// [/ignore]
 	}
 
+    /// Operator overload.
+	friend bool operator==(const Who& Lhs, const Who& Rhs)
+	{
+		//// [ignore]
+		return Lhs.What == Rhs.What;
+		//// [/ignore]
+	}
+
 	//// [inject: injectable]
 	INJECT
 };
