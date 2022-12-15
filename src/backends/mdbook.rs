@@ -32,7 +32,6 @@ pub struct BookOutput {
 #[derive(Serialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct BookHtml {
-    theme: String,
     default_theme: String,
     preferred_dark_theme: String,
     mathjax_support: bool,
@@ -567,7 +566,6 @@ fn write_manifest(config: &Config) {
         },
         output: BookOutput {
             html: BookHtml {
-                theme: "ayu".to_owned(),
                 default_theme: "ayu".to_owned(),
                 preferred_dark_theme: "ayu".to_owned(),
                 mathjax_support: true,
