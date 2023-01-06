@@ -46,27 +46,10 @@ fn main() {
     let input = matches
         .value_of("input")
         .expect("No `input` argument provided!");
-    let content = read_to_string(input)
-        .unwrap_or_else(|_| panic!("Input config file not found: {:?}", input));
-    let mut config = toml::from_str::<Config>(&content)
-        .unwrap_or_else(|_| panic!("Could not parse config file:\n{}", content));
-
-    let mut dir = PathBuf::from(input);
-    if dir.is_file() {
-        dir.pop();
-    }
-
-    for path in &mut config.input_dirs {
-        if path.is_relative() {
-            *path = dir.join(&path);
-        }
-    }
-    if config.output_dir.is_relative() {
-        config.output_dir = dir.join(&config.output_dir);
-    }
-    if let Some(output) = matches.value_of("output") {
-        config.output_dir = output.into();
-    }
+    let input = PathBuf::from(input);
+    let output = matches.value_of("output").map(|path| PathBuf::from(path));
+    let output = output.as_ref().map(|path| path.as_path());
+    let (mut config, dir) = load_config(&input, output);
 
     let mut document = Document::default();
     for path in &config.input_dirs {
@@ -87,6 +70,38 @@ fn main() {
             bake_mdbook(&document, &config, &dir)
         }
     }
+}
+
+fn load_config(input: &Path, output: Option<&Path>) -> (Config, PathBuf) {
+    let content = read_to_string(input)
+        .unwrap_or_else(|_| panic!("Input config file not found: {:?}", input));
+    let mut config = toml::from_str::<Config>(&content)
+        .unwrap_or_else(|_| panic!("Could not parse config file:\n{}", content));
+    let mut dir = PathBuf::from(input);
+    if dir.is_file() {
+        dir.pop();
+    }
+    for path in &mut config.dependencies {
+        if path.is_relative() {
+            *path = dir.join(&path);
+        }
+    }
+    for path in &mut config.input_dirs {
+        if path.is_relative() {
+            *path = dir.join(&path);
+        }
+    }
+    if let Some(output) = output {
+        config.output_dir = output.into();
+    }
+    if config.output_dir.is_relative() {
+        config.output_dir = dir.join(&config.output_dir);
+    }
+    for path in &config.dependencies {
+        let inputs = load_config(path, None).0.input_dirs;
+        config.input_dirs.extend(inputs);
+    }
+    (config, dir)
 }
 
 fn document_path(path: &Path, root: &Path, document: &mut Document, settings: &Settings) {

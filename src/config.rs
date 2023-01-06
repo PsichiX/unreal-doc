@@ -66,6 +66,8 @@ impl BackendMdBook {
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Config {
+    #[serde(default)]
+    pub dependencies: Vec<PathBuf>,
     pub input_dirs: Vec<PathBuf>,
     pub output_dir: PathBuf,
     #[serde(default)]
