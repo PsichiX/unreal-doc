@@ -90,17 +90,12 @@ pub enum Attribute {
     Pair { key: String, value: String },
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Visibility {
     Private,
     Protected,
+    #[default]
     Public,
-}
-
-impl Default for Visibility {
-    fn default() -> Self {
-        Self::Public
-    }
 }
 
 impl Visibility {
@@ -154,16 +149,11 @@ impl Enum {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum StructClassMode {
+    #[default]
     Struct,
     Class,
-}
-
-impl Default for StructClassMode {
-    fn default() -> Self {
-        Self::Struct
-    }
 }
 
 impl StructClassMode {
@@ -279,17 +269,12 @@ impl StructClass {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub enum PropertyArray {
+    #[default]
     None,
     Unsized,
     Sized(String),
-}
-
-impl Default for PropertyArray {
-    fn default() -> Self {
-        Self::None
-    }
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]

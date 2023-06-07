@@ -1,16 +1,11 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-#[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Backend {
+    #[default]
     Json,
     MdBook,
-}
-
-impl Default for Backend {
-    fn default() -> Self {
-        Self::Json
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

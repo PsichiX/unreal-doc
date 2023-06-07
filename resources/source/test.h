@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 using Foo = std::vector<int>;
 
