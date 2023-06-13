@@ -527,7 +527,7 @@ fn parse_identifier(pair: Pair<Rule>) -> String {
 
 #[test]
 fn test_parsing() {
-    let content = std::fs::read_to_string("resources/source/test.h").unwrap();
+    let content = crate::read_file("resources/source/test.h").unwrap();
     let mut document = Document::default();
     parse_unreal_cpp_header(&content, &mut document, &Default::default()).unwrap();
 }

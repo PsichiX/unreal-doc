@@ -1,5 +1,4 @@
-file = { SOI ~ BOM? ~ ((proxy | preprocessor | snippet | using | forward_declaration | element | macro_call | identifier) ~ ows)* ~ EOI }
-BOM = _{ "\u{FEFF}" }
+file = { SOI ~ ((proxy | preprocessor | snippet | using | forward_declaration | element | macro_call | identifier) ~ ows)* ~ EOI }
 ignore = @{ ignore_start ~ ignore_inner ~ ignore_end }
 ignore_start = @{ "////" ~ ows ~ "[" ~ ows ~ "ignore" ~ ows ~ "]" }
 ignore_end = @{ "////" ~ ows ~ "[" ~ ows ~ "/" ~ ows ~ "ignore" ~ ows ~ "]" }

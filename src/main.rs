@@ -15,8 +15,11 @@ use crate::{
 use clap::{Arg, Command};
 use std::{
     fs::{create_dir_all, read_to_string},
+    io::Result,
     path::{Path, PathBuf},
 };
+
+const BOM: char = '\u{FEFF}';
 
 fn main() {
     let matches = Command::new(env!("CARGO_BIN_NAME"))
@@ -73,8 +76,8 @@ fn main() {
 }
 
 fn load_config(input: &Path, output: Option<&Path>) -> (Config, PathBuf) {
-    let content = read_to_string(input)
-        .unwrap_or_else(|_| panic!("Input config file not found: {:?}", input));
+    let content =
+        read_file(input).unwrap_or_else(|_| panic!("Input config file not found: {:?}", input));
     let mut config = toml::from_str::<Config>(&content)
         .unwrap_or_else(|_| panic!("Could not parse config file:\n{}", content));
     let mut dir = PathBuf::from(input);
@@ -109,12 +112,12 @@ fn document_path(path: &Path, root: &Path, document: &mut Document, settings: &S
         if let Some(ext) = path.extension() {
             if ext == "h" {
                 let path = path.canonicalize().unwrap_or_else(|_| path.to_owned());
-                let content = read_to_string(&path)
-                    .unwrap_or_else(|_| panic!("Could not read file: {:?}", &path));
+                let content =
+                    read_file(&path).unwrap_or_else(|_| panic!("Could not read file: {:?}", &path));
                 document_header(&path, &content, document, settings);
             } else if ext == "md" {
-                let content = read_to_string(path)
-                    .unwrap_or_else(|_| panic!("Could not read file: {:?}", path));
+                let content =
+                    read_file(path).unwrap_or_else(|_| panic!("Could not read file: {:?}", path));
                 let root = root.to_string_lossy().into_owned();
                 let path = path.to_string_lossy().into_owned();
                 let pat: &[_] = &['/', '\\'];
@@ -126,7 +129,7 @@ fn document_path(path: &Path, root: &Path, document: &mut Document, settings: &S
                 document.book.insert(relative, content);
             } else if let Some(file_name) = path.file_name() {
                 if file_name == "index.txt" {
-                    let content = read_to_string(path)
+                    let content = read_file(path)
                         .unwrap_or_else(|_| panic!("Could not read file: {:?}", path));
                     let root = root.to_string_lossy().into_owned();
                     let path = path.to_string_lossy().into_owned();
@@ -168,5 +171,14 @@ fn ensure_dir(path: &Path) {
         let mut path = path.to_path_buf();
         path.pop();
         let _ = create_dir_all(&path);
+    }
+}
+
+fn read_file(path: impl AsRef<Path>) -> Result<String> {
+    let content = read_to_string(path)?;
+    if content.starts_with(BOM) {
+        Ok(content.chars().skip(1).collect())
+    } else {
+        Ok(content)
     }
 }

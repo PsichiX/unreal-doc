@@ -1,10 +1,10 @@
-use crate::{config::*, document::*, ensure_dir};
+use crate::{config::*, document::*, ensure_dir, read_file};
 use fs_extra::{copy_items, dir::CopyOptions};
 use regex::{Captures, Regex};
 use serde::Serialize;
 use std::{
     collections::HashMap,
-    fs::{read_to_string, remove_dir_all, write},
+    fs::{remove_dir_all, write},
     path::Path,
     process::Command,
 };
@@ -163,7 +163,7 @@ pub fn bake_mdbook(document: &Document, config: &Config, root: &Path) {
         .as_ref()
         .and_then(|mdbook| mdbook.header.as_ref())
         .map(|path| {
-            read_to_string(&root.join(path))
+            read_file(&root.join(path))
                 .unwrap_or_else(|_| panic!("Could not read header file: {:?}", path))
                 + &"\n".to_owned()
         })
@@ -174,7 +174,7 @@ pub fn bake_mdbook(document: &Document, config: &Config, root: &Path) {
         .and_then(|mdbook| mdbook.footer.as_ref())
         .map(|path| {
             "\n".to_owned()
-                + &read_to_string(&root.join(path))
+                + &read_file(&root.join(path))
                     .unwrap_or_else(|_| panic!("Could not read footer file: {:?}", path))
         })
         .unwrap_or_default();
