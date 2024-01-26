@@ -146,3 +146,23 @@ struct Who
 	//// [inject: injectable]
 	INJECT
 };
+
+
+UCLASS()
+class UTestLibrary : public UBlueprintFunctionLibrary
+{
+	GENERATED_BODY()
+
+public:
+#pragma region
+	/// What is this function
+	UFUNCTION(BlueprintCallable, Category = "TestLibrary")
+	static void SetXX(
+		const UObject *WCO,
+		FTimerHandle &InOutHandle,
+		TFunction<void()> &&Callback,
+		float Internal,
+		bool InbLoop,
+		float InFirstDelay = 1);
+#pragma endregion
+};
