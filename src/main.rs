@@ -169,7 +169,6 @@ fn document_header(path: &Path, content: &str, document: &mut Document, settings
                     error.to_string()
                 );
             } else {
-                // 处理其他类型的错误
                 println!("Error: {}", error.to_string());
             }
 
