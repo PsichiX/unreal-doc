@@ -1,3 +1,4 @@
+
 #[macro_use]
 extern crate pest_derive;
 
@@ -155,13 +156,29 @@ fn document_path(path: &Path, root: &Path, document: &mut Document, settings: &S
 }
 
 fn document_header(path: &Path, content: &str, document: &mut Document, settings: &Settings) {
-    parse_unreal_cpp_header(content, document, settings).unwrap_or_else(|error| {
-        panic!(
-            "Could not parse Unreal C++ header file content!\nFile: {:?}\nError:\n{}",
-            path,
-            error.to_string()
-        )
-    });
+    match parse_unreal_cpp_header(content, document, settings) {
+        Ok(_) => {}
+        Err(error) => {
+            if let pest::error::ErrorVariant::ParsingError { positives, .. } = &error.variant {
+                let rules: Vec<_> = positives.iter().map(|r| format!("{:?}", r)).collect();
+                let rules_chain = rules.join(" -> ");
+                println!(
+                    "Error in Pest rules chain '{}' at line {}: {}",
+                    rules_chain,
+                    error.line(),
+                    error.to_string()
+                );
+            } else {
+                // 处理其他类型的错误
+                println!("Error: {}", error.to_string());
+            }
+
+            panic!(
+                "Could not parse Unreal C++ header file content!\nFile: {:?}",
+                path,
+            );
+        }
+    }
 }
 
 fn ensure_dir(path: &Path) {
