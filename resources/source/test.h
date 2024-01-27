@@ -163,6 +163,6 @@ public:
 		TFunction<void()> &&Callback,
 		float Internal,
 		bool InbLoop,
-		float InFirstDelay = 1);
+		float InFirstDelay = 1.f);
 #pragma endregion
 };
