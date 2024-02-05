@@ -529,5 +529,6 @@ fn parse_identifier(pair: Pair<Rule>) -> String {
 fn test_parsing() {
     let content = crate::read_file("resources/source/test.h").unwrap();
     let mut document = Document::default();
-    parse_unreal_cpp_header(&content, &mut document, &Default::default()).unwrap();
+    parse_unreal_cpp_header(&content, &mut document, &Default::default())
+        .unwrap_or_else(|error| panic!("Error parsing C++ header: {}", error));
 }

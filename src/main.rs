@@ -158,8 +158,7 @@ fn document_header(path: &Path, content: &str, document: &mut Document, settings
     parse_unreal_cpp_header(content, document, settings).unwrap_or_else(|error| {
         panic!(
             "Could not parse Unreal C++ header file content!\nFile: {:?}\nError:\n{}",
-            path,
-            error.to_string()
+            path, error
         )
     });
 }
