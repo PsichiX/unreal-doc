@@ -6,6 +6,7 @@ use std::collections::HashSet;
 #[grammar = "ast/unreal_cpp_header.pest"]
 pub struct UnrealCppHeaderParser;
 
+#[allow(clippy::result_large_err)]
 pub fn parse_unreal_cpp_header(
     content: &str,
     document: &mut Document,
@@ -14,9 +15,8 @@ pub fn parse_unreal_cpp_header(
     let pair = UnrealCppHeaderParser::parse(Rule::file, content)?
         .next()
         .unwrap();
-    match pair.as_rule() {
-        Rule::file => parse_file(pair, document, settings),
-        _ => {}
+    if pair.as_rule() == Rule::file {
+        parse_file(pair, document, settings);
     }
     Ok(())
 }
@@ -30,7 +30,7 @@ fn parse_unreal_cpp_element(
         .unwrap_or_else(|error| {
             panic!(
                 "Could not parse Unreal C++ element content!\nError:\n{}",
-                error.to_string()
+                error
             )
         })
         .next()
@@ -122,14 +122,12 @@ fn parse_proxy(pair: Pair<Rule>, settings: &Settings, document: &mut Document) {
                 item.doc_comments = Some(doc_comments);
                 document.proxy_functions.push(Proxy { tags, item });
             }
-            return;
         }
         Element::Property(mut item) => {
             if let Some(doc_comments) = doc_comments {
                 item.doc_comments = Some(doc_comments);
                 document.proxy_properties.push(Proxy { tags, item });
             }
-            return;
         }
         _ => {}
     }
@@ -276,8 +274,10 @@ fn parse_specifier_meta(pair: Pair<Rule>, result: &mut Specifiers) {
 }
 
 fn parse_element_enum(pair: Pair<Rule>, doc_comments: &Option<String>) -> Enum {
-    let mut result = Enum::default();
-    result.doc_comments = doc_comments.to_owned();
+    let mut result = Enum {
+        doc_comments: doc_comments.to_owned(),
+        ..Default::default()
+    };
     for pair in pair.into_inner() {
         match pair.as_rule() {
             Rule::uenum => result.specifiers = Some(parse_specifiers(pair)),
@@ -306,9 +306,11 @@ fn parse_element_struct_class(
     settings: &Settings,
     document: &mut Document,
 ) -> StructClass {
-    let mut result = StructClass::default();
-    result.mode = mode;
-    result.doc_comments = doc_comments.to_owned();
+    let mut result = StructClass {
+        mode,
+        doc_comments: doc_comments.to_owned(),
+        ..Default::default()
+    };
     for pair in pair.into_inner() {
         match pair.as_rule() {
             Rule::ustruct | Rule::uclass => result.specifiers = Some(parse_specifiers(pair)),
@@ -384,9 +386,11 @@ fn parse_element_property(
     doc_comments: &Option<String>,
     visibility: Visibility,
 ) -> Property {
-    let mut result = Property::default();
-    result.doc_comments = doc_comments.to_owned();
-    result.visibility = visibility;
+    let mut result = Property {
+        doc_comments: doc_comments.to_owned(),
+        visibility,
+        ..Default::default()
+    };
     for pair in pair.into_inner() {
         match pair.as_rule() {
             Rule::uproperty => result.specifiers = Some(parse_specifiers(pair)),
@@ -424,9 +428,11 @@ fn parse_element_function(
     visibility: Visibility,
     document: &mut Document,
 ) -> Function {
-    let mut result = Function::default();
-    result.doc_comments = doc_comments.to_owned();
-    result.visibility = visibility;
+    let mut result = Function {
+        doc_comments: doc_comments.to_owned(),
+        visibility,
+        ..Default::default()
+    };
     for pair in pair.into_inner() {
         match pair.as_rule() {
             Rule::ufunction => result.specifiers = Some(parse_specifiers(pair)),
@@ -458,9 +464,8 @@ fn parse_function_signature(pair: Pair<Rule>, result: &mut Function) {
 
 fn parse_function_arguments(pair: Pair<Rule>, result: &mut Function) {
     for pair in pair.into_inner() {
-        match pair.as_rule() {
-            Rule::function_argument => result.arguments.push(parse_function_argument(pair)),
-            _ => {}
+        if pair.as_rule() == Rule::function_argument {
+            result.arguments.push(parse_function_argument(pair));
         }
     }
 }
@@ -481,9 +486,8 @@ fn parse_function_argument(pair: Pair<Rule>) -> Argument {
 
 fn parse_function_body(pair: Pair<Rule>, document: &mut Document) {
     for pair in pair.into_inner() {
-        match pair.as_rule() {
-            Rule::snippet => parse_snippet(pair, document),
-            _ => {}
+        if pair.as_rule() == Rule::snippet {
+            parse_snippet(pair, document);
         }
     }
 }

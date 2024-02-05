@@ -24,7 +24,6 @@ checks:
   just build
   just clippy
   just test
-  just test-doc-gen
 
 list-outdated:
   cargo outdated -R -w

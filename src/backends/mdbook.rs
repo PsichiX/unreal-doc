@@ -163,9 +163,9 @@ pub fn bake_mdbook(document: &Document, config: &Config, root: &Path) {
         .as_ref()
         .and_then(|mdbook| mdbook.header.as_ref())
         .map(|path| {
-            read_file(&root.join(path))
+            read_file(root.join(path))
                 .unwrap_or_else(|_| panic!("Could not read header file: {:?}", path))
-                + &"\n".to_owned()
+                + "\n"
         })
         .unwrap_or_default();
     let footer = config
@@ -174,7 +174,7 @@ pub fn bake_mdbook(document: &Document, config: &Config, root: &Path) {
         .and_then(|mdbook| mdbook.footer.as_ref())
         .map(|path| {
             "\n".to_owned()
-                + &read_file(&root.join(path))
+                + &read_file(root.join(path))
                     .unwrap_or_else(|_| panic!("Could not read footer file: {:?}", path))
         })
         .unwrap_or_default();
@@ -188,7 +188,7 @@ pub fn bake_mdbook(document: &Document, config: &Config, root: &Path) {
         };
         let content = preprocess_content(
             &content,
-            &document,
+            document,
             config.backend_mdbook.as_ref(),
             relative_path,
         );
@@ -250,8 +250,8 @@ fn preprocess_content(
     fix_site_references(
         &content,
         config
-            .and_then(|config| config.site_url.as_ref().map(|v| v.as_str()))
-            .unwrap_or_else(|| "/"),
+            .and_then(|config| config.site_url.as_deref())
+            .unwrap_or("/"),
         relative_path,
     )
 }
@@ -356,8 +356,8 @@ fn include_book_index(
         listing.push_str("# Pages\n\n");
         for line in content.lines() {
             let line = line.trim();
-            if !line.is_empty() && !line.starts_with("#") {
-                let (name, title) = if let Some(position) = line.find(":") {
+            if !line.is_empty() && !line.starts_with('#') {
+                let (name, title) = if let Some(position) = line.find(':') {
                     (line[..position].trim(), Some(line[(position + 1)..].trim()))
                 } else {
                     (line, None)
@@ -371,7 +371,7 @@ fn include_book_index(
                                 content
                                     .lines()
                                     .next()
-                                    .map(|line| line.trim_start_matches("#").trim())
+                                    .map(|line| line.trim_start_matches('#').trim())
                             })
                             .unwrap_or(name);
                         index.push_str(&format!("- [{}](book/{})\n", title, path));
@@ -529,7 +529,7 @@ fn bake_function_argument(item: &Argument, content: &mut String) {
     if let Some(name) = &item.name {
         content.push_str(&format!("* ## __`{}`__\n\n", name));
     } else {
-        content.push_str(&format!("* _Unnamed_\n\n"));
+        content.push_str("* _Unnamed_\n\n");
     }
     let indented = indent(4, &{
         let mut content = String::default();
@@ -570,7 +570,7 @@ fn write_manifest(config: &Config) {
                 preferred_dark_theme: "ayu".to_owned(),
                 mathjax_support: true,
                 no_section_label: true,
-                site_url: mdbook.site_url.unwrap_or_else(|| "/".to_string()),
+                site_url: mdbook.site_url.unwrap_or("/".to_string()),
                 fold: BookFold {
                     enable: false,
                     level: 0,
@@ -580,7 +580,7 @@ fn write_manifest(config: &Config) {
     };
     let content = toml::to_string(&manifest).expect("Could not serialize mdbook manifest!");
     let path = config.output_dir.join("book.toml");
-    let _ = ensure_dir(&path);
+    ensure_dir(&path);
     write(&path, content)
         .unwrap_or_else(|_| panic!("Could not write mdbook manifest file: {:?}", path));
 }

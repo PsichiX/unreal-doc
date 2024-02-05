@@ -50,13 +50,13 @@ fn main() {
         .value_of("input")
         .expect("No `input` argument provided!");
     let input = PathBuf::from(input);
-    let output = matches.value_of("output").map(|path| PathBuf::from(path));
-    let output = output.as_ref().map(|path| path.as_path());
+    let output = matches.value_of("output").map(PathBuf::from);
+    let output = output.as_deref();
     let (mut config, dir) = load_config(&input, output);
 
     let mut document = Document::default();
     for path in &config.input_dirs {
-        document_path(&path, &path, &mut document, &config.settings);
+        document_path(path, path, &mut document, &config.settings);
     }
     document.resolve_injects();
     document.resolve_self_names_in_docs();
@@ -124,7 +124,7 @@ fn document_path(path: &Path, root: &Path, document: &mut Document, settings: &S
                 let relative = path
                     .trim_start_matches(&root)
                     .trim_start_matches(pat)
-                    .replace("\\", "/")
+                    .replace('\\', "/")
                     .to_owned();
                 document.book.insert(relative, content);
             } else if let Some(file_name) = path.file_name() {
@@ -137,7 +137,7 @@ fn document_path(path: &Path, root: &Path, document: &mut Document, settings: &S
                     let relative = path
                         .trim_start_matches(&root)
                         .trim_start_matches(pat)
-                        .replace("\\", "/")
+                        .replace('\\', "/")
                         .to_owned();
                     document.book.insert(relative, content);
                 }
